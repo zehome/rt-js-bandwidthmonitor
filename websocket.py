@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# (c) 2011 Laurent Coustet
+# http://ed.zehome.com/
+
 import socket
 import struct
 import hashlib
