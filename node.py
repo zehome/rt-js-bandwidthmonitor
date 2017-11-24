@@ -84,13 +84,13 @@ class HostMap(object):
         return table.draw()
 
 class Dispatcher(object):
-    def __init__(self, websocket_server):
+    def __init__(self, ws):
         self.hostmap = HostMap()
-        self.websocket_server = websocket_server
+        self.websocket = ws
         self.total_pkt_counter = 0
     
     def push_websocket(self, dict):
-        self.websocket_server.sendToClient(json.dumps(dict))
+        self.websocket.send(json.dumps(dict))
     
     def pypcap_dispatch_callback(self, timestamp, pkt, *args, **kw):
         self.total_pkt_counter += 1
@@ -137,7 +137,7 @@ class Dispatcher(object):
             
             # We want to discard "websocket" packets ;)
             if pkttype in ("TCP", "TCP6"):
-                ignore_port = self.websocket_server.server_address[1]
+                ignore_port = 9876
                 if (pktdata.sport == ignore_port or pktdata.dport == ignore_port):
                     return
             
@@ -257,14 +257,12 @@ if __name__ == "__main__":
         print "python-dpkt must be installed on your computer."
         sys.exit(0)
 
-    websocket = websocket.BackgroundWebSocketServer(
-        ("0.0.0.0", options.port), websocket.WebSocketHandler)
-    websocket.start()
-
-    dispatcher = Dispatcher(websocket_server=websocket.server)
+    ws = websocket.WebSocket()
+    ws.connect("ws://127.0.0.1:9876")
+    dispatcher = Dispatcher(ws)
     
     print "Currently listening for packets on interface %s." % (options.interface,)
-    pc.loop(dispatcher.pypcap_dispatch_callback)
+    pc.loop(0, dispatcher.pypcap_dispatch_callback)
     print "Exiting."
     pc.close()
     sys.exit(0)

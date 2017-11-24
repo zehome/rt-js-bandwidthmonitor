@@ -19,8 +19,8 @@ var paper = null;
 var ws = null;
 
 /* Initialization sizes */
-var total_width = 600;
-var total_height = 600;
+var total_width = 1200;
+var total_height = 900;
 
 /* Node size */
 var _minimum_radius = 5;
@@ -359,7 +359,7 @@ function recalc_nodes_position()
 {
     var center_x = total_width / 2;
     var center_y = total_height / 2;
-    var distance = 200;
+    var distance = 350;
     var text_distance = distance + 30;
     var initialAngle = 0;
     
@@ -484,7 +484,7 @@ window.onload = function()
 {
     initialize();
 
-    ws = new WebSocket("ws://192.168.6.2:9876/");
+    ws = new WebSocket("ws://127.0.0.1:9876/");
     //ws = new WebSocket("ws://appart.zehome.com:9876/");
     ws.onopen = function() { console.log("Connected to websocket server."); };
     ws.onmessage = handle_pkt;
